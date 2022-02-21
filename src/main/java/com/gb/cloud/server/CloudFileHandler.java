@@ -53,9 +53,11 @@ public class CloudFileHandler implements Runnable{
                     System.err.println("Unknown command: " + command);
                 }}
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
 }
