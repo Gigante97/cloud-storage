@@ -116,11 +116,36 @@ public class EchoServerNio {
                 channel.write(ByteBuffer.wrap(msg.getBytes(StandardCharsets.UTF_8)));
             }
         }
+        if(reader.toString().startsWith("cat")){
+
+            String arg = reader.delete(0,4).delete(reader.length()-2,reader.length()).toString();
+            if (Files.isDirectory(Paths.get(arg))){
+               String msg = "it\'s not\'t file!\r\n->";
+                channel.write(ByteBuffer.wrap(msg.getBytes(StandardCharsets.UTF_8)));
+            } else {
+                try {
+                    String msg = comands.getText(currentDir, arg) + "\r\n" + currentDir + " ->";
+                    channel.write(ByteBuffer.wrap(msg.getBytes(StandardCharsets.UTF_8)));
+                } catch (Exception e) {
+                    String msg = "NOT FOUND FILE\r\n" + currentDir + " ->";
+                    channel.write(ByteBuffer.wrap(msg.getBytes(StandardCharsets.UTF_8)));
+                    e.printStackTrace();
+                }
+            }
+        }
 
         if (reader.toString().startsWith("mkdir")) {
             String arg = reader.delete(0,6).delete(reader.length()-2,reader.length()).toString();
             Path dir = Paths.get(currentDir.toString(),arg);
             comands.createDir(dir);
+            String msg = currentDir.normalize() + " ->";
+            channel.write(ByteBuffer.wrap(msg.getBytes(StandardCharsets.UTF_8)));
+        }
+
+        if (reader.toString().startsWith("touch")) {
+            String arg = reader.delete(0,6).delete(reader.length()-2,reader.length()).toString();
+            Path dir = Paths.get(currentDir.toString(),arg);
+            comands.createFile(dir);
             String msg = currentDir.normalize() + " ->";
             channel.write(ByteBuffer.wrap(msg.getBytes(StandardCharsets.UTF_8)));
         }
